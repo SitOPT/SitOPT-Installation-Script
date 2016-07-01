@@ -33,10 +33,6 @@ These are the default ports, where every module runs:
 If you want to install the complete suite on one computer, simply execute
 following commands:
 
-``git clone https://github.com/mormulms/SitOPT.git``
-
-``cd SitOPT``
-
 ``sudo ./build.sh``
 
 ``sudo cp situation_template_mapping/settings.properties ~tomcat8/situation_mapping.properties``
