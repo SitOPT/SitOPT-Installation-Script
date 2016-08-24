@@ -51,7 +51,7 @@ pkill -9 npm
 pkill -9 actionhero
 pkill -9 node
 
-# build the mapping library
+# build the mapping library for Node-Red
 cd Situation-Template-Mapping_Node-Red
 rm -rf src/situationtemplate
 sudo -u ${ORIG_USER} xjc -d src -p situationtemplate.model situation_template.xsd
@@ -60,8 +60,26 @@ sudo -u ${ORIG_USER} ant
 cp situation_template_v01.jar ../Situation-Dashboard/public/nodeRed/mappingString.jar
 cp situation_template_v01.jar ../Situation-Template-Modeling-Tool/lib
 
+# build the mapping library for Esper
+cd Situation-Template-Mapping_Esper
+rm -rf target
+cd src/main
+rm -rf java/situation_template_cep
+xjc -d java -p situation_template_cep resources/schema/situation_template_CEP.xsd
+cd ../..
+sudo -u ${ORIG_USER} mvn dependency:copy-dependencies
+sudo -u ${ORIG_USER} mvn package
+cd target/dependency
+sudo -u ${ORIG_USER} jar xf commons-logging-1.2.jar org
+sudo -u ${ORIG_USER} jar xf log4j-1.2.17.jar org
+sudo -u ${ORIG_USER} bash -c 'echo "Main-Class: mapping.ST2EPL_Mapper" > Manifest.txt'
+sudo -u ${ORIG_USER} jar cfm ../Situation-Template-Mapping_Esper.jar Manifest.txt -C ../classes . org
+rm -rf Manifest.txt org
+cd ../../..
+sudo -u ${ORIG_USER} mkdir Situation-Dashboard/public/esper
+sudo -u ${ORIG_USER} cp Situation-Template-Mapping_Esper/target/Situation-Template-Mapping_Esper.jar Situation-Dashboard/public/esper/mappingString.jar
+
 # build the modeling tool
-cd ..
 cd Situation-Template-Modeling-Tool
 rm -rf src/model
 sudo -u ${ORIG_USER} xjc -d src -p model res/situation_template.xsd
