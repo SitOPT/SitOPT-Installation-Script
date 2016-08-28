@@ -19,7 +19,7 @@ fi
 
 mongo RBS --host localhost --eval 'db.createUser({"user": "RBS", "pwd": "RBS", "roles": ["readWrite"]})'
 sudo -u ${ORIG_USER} chmod +x db_setup.sh
-sudo -u ${ORIG_USER} ./db_setup.sh
+sudo -u ${ORIG_USER} ./db_setup.sh localhost
   
 
 # clone repositories
