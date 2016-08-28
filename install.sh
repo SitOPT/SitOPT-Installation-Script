@@ -61,8 +61,9 @@ rm -rf src/situationtemplate
 sudo -u ${ORIG_USER} xjc -d src -p situationtemplate.model ../Situation-Template-Schema/situation_template.xsd
 sudo -u ${ORIG_USER} ant
 # copy the jar to the needed locations
-sudo -u armin cp situation_template_v01.jar ../Situation-Dashboard/public/nodeRed/mappingString.jar
-sudo -u armin cp situation_template_v01.jar ../Situation-Template-Modeling-Tool/lib
+sudo -u ${ORIG_USER} mkdir -p ../Situation-Dashboard/public/nodeRed
+sudo -u ${ORIG_USER} cp situation_template_v01.jar ../Situation-Dashboard/public/nodeRed/mappingString.jar
+sudo -u ${ORIG_USER} cp situation_template_v01.jar ../Situation-Template-Modeling-Tool/lib
 cd ..
 
 # build the mapping library for Esper
@@ -90,7 +91,7 @@ rm -rf src/model
 sudo -u ${ORIG_USER} xjc -d src -p model res/situation_template.xsd
 sudo -u ${ORIG_USER} ant
 # copy the war file and the WebContent directory to the default tomcat8 locations
-mkdir /var/lib/tomcat9/webapps/SitTempModelingTool
+mkdir /var/lib/tomcat8/webapps/SitTempModelingTool
 cp -R WebContent/* /var/lib/tomcat8/webapps/SitTempModelingTool
 cp SitTempModelingTool.war /var/lib/tomcat8/webapps
 /etc/init.d/tomcat8 restart
