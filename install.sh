@@ -108,6 +108,12 @@ cd ..
 cd Resource-Management-Platform
 rm -rf node_modules
 sudo -u ${ORIG_USER} npm install
+if [[ -f config/database.config.js ]]; then
+  cp config/database.config.js.example config/database.config.js
+fi
+if [[ -f config/sitdb.config.js.example ]]; then
+  cp config/sitdb.config.js.example config/sitdb.config.js
+fi
 sudo -u ${ORIG_USER} npm start >> rmp.log 2>&1 &
 
 # build the situation dashboard
