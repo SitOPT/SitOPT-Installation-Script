@@ -64,6 +64,9 @@ sudo -u ${ORIG_USER} ant
 sudo -u ${ORIG_USER} mkdir -p ../Situation-Dashboard/public/nodeRed
 sudo -u ${ORIG_USER} cp situation_template_v01.jar ../Situation-Dashboard/public/nodeRed/mappingString.jar
 sudo -u ${ORIG_USER} cp situation_template_v01.jar ../Situation-Template-Modeling-Tool/lib
+if [[ ! -f ~${ORIG_USER}/situation_mapping.properties ]]; then
+  sudo -u ${ORIG_USER} cp settings.properties situation_mapping.properties
+fi
 cd ..
 
 # build the mapping library for Esper
