@@ -122,6 +122,9 @@ sudo -u ${ORIG_USER} npm start >> rmp.log 2>&1 &
 # build the situation dashboard
 cd ..
 cd Situation-Dashboard
+if [[ ! -f config/sitdb.js ]]; then
+  cp config/sitdb.js.example config/sitdb.js
+fi
 rm -rf node_modules
 sudo -u ${ORIG_USER} npm install
 sudo -u ${ORIG_USER} nodejs server.js >> dashboard.log 2>&1 &
