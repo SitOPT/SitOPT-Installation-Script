@@ -152,7 +152,3 @@ Frontend for SitDB
 ``npm install``
 
 ``nodejs server.js``
-
-## SoapUI
-
-Web-Service test cases for context server query and data insert testing.

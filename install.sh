@@ -19,8 +19,12 @@ fi
 
 mongo RBS --host localhost --eval 'db.createUser({"user": "RBS", "pwd": "RBS", "roles": ["readWrite"]})'
 sudo -u ${ORIG_USER} chmod +x db_setup.sh
-sudo -u ${ORIG_USER} ./db_setup.sh
-  
+sudo -u ${ORIG_USER} ./db_setup.sh localhost
+
+scriptname=$(basename $0)
+if [[ -f $scriptname ]]; then
+  cd ..
+fi
 
 # clone repositories
 
@@ -54,18 +58,23 @@ pkill -9 node
 # build the mapping library for Node-Red
 cd Situation-Template-Mapping_Node-Red
 rm -rf src/situationtemplate
-sudo -u ${ORIG_USER} xjc -d src -p situationtemplate.model situation_template.xsd
+sudo -u ${ORIG_USER} xjc -d src -p situationtemplate.model ../Situation-Template-Schema/situation_template.xsd
 sudo -u ${ORIG_USER} ant
 # copy the jar to the needed locations
-cp situation_template_v01.jar ../Situation-Dashboard/public/nodeRed/mappingString.jar
-cp situation_template_v01.jar ../Situation-Template-Modeling-Tool/lib
+sudo -u ${ORIG_USER} mkdir -p ../Situation-Dashboard/public/nodeRed
+sudo -u ${ORIG_USER} cp situation_template_v01.jar ../Situation-Dashboard/public/nodeRed/mappingString.jar
+sudo -u ${ORIG_USER} cp situation_template_v01.jar ../Situation-Template-Modeling-Tool/lib
+if [[ ! -f ~${ORIG_USER}/situation_mapping.properties ]]; then
+  sudo -u ${ORIG_USER} cp settings.properties situation_mapping.properties
+fi
+cd ..
 
 # build the mapping library for Esper
 cd Situation-Template-Mapping_Esper
 rm -rf target
 cd src/main
 rm -rf java/situation_template_cep
-xjc -d java -p situation_template_cep resources/schema/situation_template_CEP.xsd
+sudo -u ${ORIG_USER} xjc -d java -p situation_template_cep resources/schema/situation_template_CEP.xsd
 cd ../..
 sudo -u ${ORIG_USER} mvn dependency:copy-dependencies
 sudo -u ${ORIG_USER} mvn package
@@ -85,6 +94,7 @@ rm -rf src/model
 sudo -u ${ORIG_USER} xjc -d src -p model res/situation_template.xsd
 sudo -u ${ORIG_USER} ant
 # copy the war file and the WebContent directory to the default tomcat8 locations
+mkdir /var/lib/tomcat8/webapps/SitTempModelingTool
 cp -R WebContent/* /var/lib/tomcat8/webapps/SitTempModelingTool
 cp SitTempModelingTool.war /var/lib/tomcat8/webapps
 /etc/init.d/tomcat8 restart
@@ -101,6 +111,12 @@ cd ..
 cd Resource-Management-Platform
 rm -rf node_modules
 sudo -u ${ORIG_USER} npm install
+if [[ ! -f config/database.config.js ]]; then
+  cp config/database.config.js.example config/database.config.js
+fi
+if [[ ! -f config/sitdb.config.js.example ]]; then
+  cp config/sitdb.config.js.example config/sitdb.config.js
+fi
 sudo -u ${ORIG_USER} npm start >> rmp.log 2>&1 &
 
 # build the situation dashboard
@@ -110,13 +126,14 @@ rm -rf node_modules
 sudo -u ${ORIG_USER} npm install
 sudo -u ${ORIG_USER} nodejs server.js >> dashboard.log 2>&1 &
 
-cd ../..
+cd ..
 
 # check if node-red directory exists if not create it and install node-red into it
 if [[ ! -d node-red ]]; then
   sudo -u ${ORIG_USER} mkdir node-red
   cd node-red
   sudo -u ${ORIG_USER} npm install node-red
+  cd ..
 fi
 
 # start node-red
