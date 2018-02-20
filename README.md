@@ -14,7 +14,8 @@ More details on the installation of the modules can be found in the correspondin
  - MongoDB
  - CouchDB
  - Swagger
- 
+ - Maven
+
 ### Defaults
 
 These are the default ports, where every module runs:
@@ -32,6 +33,12 @@ These are the default ports, where every module runs:
 
 If you want to install the complete suite on one computer, simply execute
 following commands:
+
+#### Installing Dependencies for Ubuntu 1604
+
+``sudo ./installDepsUbuntu1604.sh`` 
+
+#### Installing SitOpt
 
 ``sudo ./build.sh``
 
